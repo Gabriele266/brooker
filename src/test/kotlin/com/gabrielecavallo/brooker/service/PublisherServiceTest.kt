@@ -1,6 +1,7 @@
 package com.gabrielecavallo.brooker.service
 
 import com.gabrielecavallo.brooker.domain.entities.Publisher
+import com.gabrielecavallo.brooker.services.publisher.PublisherFilter
 import com.gabrielecavallo.brooker.services.publisher.PublisherService
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.DisplayName
@@ -92,5 +93,24 @@ class PublisherServiceTest @Autowired constructor(
         assertThat(updateResult).isNotNull
         assertThat(publisherService.count()).isEqualTo(initSize)
         assertThat(publisherService.findById(updateResult.id)).isNotNull.isEqualTo(toUpdate)
+    }
+
+    @DisplayName("Filtering test")
+    @Test
+    fun testFiltering() {
+        val results = publisherService.findAll(
+            PublisherFilter(
+                firstName = "Thomson",
+                averageRating = 3.0F,
+                tags = listOf("story")
+            )
+        )
+
+        assertThat(results.size).isGreaterThan(0)
+        results.forEach {
+            assertThat(it.firstName).isEqualTo("Thomson")
+            assertThat(it.averageRating).isGreaterThan(3.0F)
+            assertThat(it.tags).contains("story")
+        }
     }
 }
