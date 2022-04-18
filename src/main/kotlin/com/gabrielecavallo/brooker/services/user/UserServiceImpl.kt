@@ -78,8 +78,7 @@ class UserServiceImpl(
     override fun update(id: String, data: User): User {
         removeById(id)
 
-        save(data)
-        return data
+        return save(data)
     }
 
     override fun removeAll() =

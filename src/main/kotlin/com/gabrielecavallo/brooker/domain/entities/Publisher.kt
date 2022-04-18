@@ -1,6 +1,5 @@
 package com.gabrielecavallo.brooker.domain.entities
 
-import com.gabrielecavallo.brooker.domain.shared.WithId
 import com.gabrielecavallo.brooker.domain.shared.WithName
 import org.springframework.data.mongodb.core.mapping.Document
 
