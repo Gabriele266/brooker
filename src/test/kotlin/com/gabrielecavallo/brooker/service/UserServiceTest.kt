@@ -17,6 +17,38 @@ class UserServiceTest @Autowired constructor(
     val userService: UserService,
 ) {
 
+    val persistedUsers = listOf(
+        User(
+            "Gabriele",
+            "Cavallo",
+            "mimmo.cabal@gmail.com",
+            "Via Cesare Vinaj 2",
+            LocalDateTime.now(),
+            "IT"
+        ), User(
+            "Giovanni",
+            "Beraudo",
+            "giovanni.bera@gmail.com",
+            "Via Navona",
+            LocalDateTime.now(),
+            "IT"
+        ), User(
+            "Piero",
+            "Beraudo",
+            "giovanni.bera@gmail.com",
+            "Via Navona",
+            LocalDateTime.now(),
+            "EN"
+        ), User(
+            "Hola",
+            "Senorito",
+            "hola.senorito@mail.com",
+            "Via Madrid 21",
+            LocalDateTime.now(),
+            "ES"
+        )
+    )
+
     init {
         seedData()
     }
@@ -27,55 +59,13 @@ class UserServiceTest @Autowired constructor(
     fun seedData() {
         userService.removeAll()
 
-        userService.save(
-            User(
-                "Gabriele",
-                "Cavallo",
-                "mimmo.cabal@gmail.com",
-                "Via Cesare Vinaj 2",
-                LocalDateTime.now(),
-                "IT"
-            )
-        )
-
-        userService.save(
-            User(
-                "Giovanni",
-                "Beraudo",
-                "giovanni.bera@gmail.com",
-                "Via Navona",
-                LocalDateTime.now(),
-                "IT"
-            )
-        )
-
-        userService.save(
-            User(
-                "Piero",
-                "Beraudo",
-                "giovanni.bera@gmail.com",
-                "Via Navona",
-                LocalDateTime.now(),
-                "EN"
-            )
-        )
-
-        userService.save(
-            User(
-                "Hola",
-                "Senorito",
-                "hola.senorito@mail.com",
-                "Via Madrid 21",
-                LocalDateTime.now(),
-                "ES"
-            )
-        )
+        userService.saveAll(persistedUsers)
     }
 
 
     @Test
     fun sampleTest() {
-        assertThat(userService.count()).isEqualTo(3)
+        assertThat(userService.findAll()).isNotNull
     }
 
     @DisplayName("Filtering test")
@@ -96,7 +86,7 @@ class UserServiceTest @Autowired constructor(
     @Test
     fun testFindAll() {
         val allUsers = userService.findAll()
-        assertThat(allUsers.size).isEqualTo(3)
+        assertThat(allUsers.containsAll(persistedUsers))
         assertThat(allUsers.any {
             it.firstName == "Giovanni"
         }).isTrue

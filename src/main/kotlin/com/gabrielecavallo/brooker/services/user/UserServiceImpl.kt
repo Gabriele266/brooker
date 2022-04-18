@@ -1,8 +1,9 @@
 package com.gabrielecavallo.brooker.services.user
 
+import com.gabrielecavallo.brooker.common.stringToObjectId
 import com.gabrielecavallo.brooker.domain.entities.User
+import com.gabrielecavallo.brooker.exceptions.InvalidIdException
 import com.gabrielecavallo.brooker.repositories.UserRepository
-import org.bson.types.ObjectId
 import org.springframework.data.mongodb.core.MongoTemplate
 import org.springframework.data.mongodb.core.query.Criteria
 import org.springframework.data.mongodb.core.query.Query
@@ -20,10 +21,12 @@ class UserServiceImpl(
         userRepository.saveAll(data)
 
     override fun findById(id: String): User? =
-        userRepository.findById(ObjectId(id)).orElse(null)
+        userRepository.findById(stringToObjectId(id)).orElseThrow {
+            throw InvalidIdException(id, "Invalid User reference")
+        }
 
     override fun removeById(id: String): User? {
-        userRepository.deleteById(ObjectId(id))
+        userRepository.deleteById(stringToObjectId(id))
 
         return findById(id)
     }
