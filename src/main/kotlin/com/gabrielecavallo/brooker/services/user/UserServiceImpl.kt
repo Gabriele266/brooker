@@ -47,33 +47,8 @@ class UserServiceImpl(
     override fun findAllWithName(firstName: String): List<User> =
         findAll(UserFilter(firstName))
 
-    override fun findAll(filter: UserFilter): List<User> {
-        val query = Query()
-
-        if (filter.firstName != null)
-            query.addCriteria(Criteria.where("firstName").`is`(filter.firstName))
-
-        if (filter.lastName != null)
-            query.addCriteria(Criteria.where("lastName").`is`(filter.lastName))
-
-        if (filter.country != null)
-            query.addCriteria(Criteria.where("country").`is`(filter.country))
-
-        if (filter.address != null)
-            query.addCriteria(Criteria.where("address").regex("\\b${filter.address}\\b"))
-
-        var allResults = mongoTemplate.find(query, User::class.java)
-
-        if (filter.initialBirthDate != null) allResults.filter {
-            it.birthDate.isAfter(filter.initialBirthDate)
-        }
-
-        if (filter.endBirthDate != null) allResults = allResults.filter {
-            it.birthDate.isBefore(filter.endBirthDate)
-        }
-
-        return allResults
-    }
+    override fun findAll(filter: UserFilter): List<User> =
+        filter.filter(mongoTemplate)
 
     override fun update(id: String, data: User): User {
         removeById(id)
