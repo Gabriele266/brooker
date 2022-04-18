@@ -3,8 +3,11 @@ package com.gabrielecavallo.brooker.web.restful
 import com.gabrielecavallo.brooker.domain.entities.User
 import com.gabrielecavallo.brooker.services.user.UserFilter
 import com.gabrielecavallo.brooker.services.user.UserService
+import org.springframework.format.annotation.DateTimeFormat
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
+import java.net.Inet4Address
+import java.time.LocalDateTime
 
 @RestController
 @RequestMapping("/users")
@@ -13,8 +16,14 @@ class UserController(
 ) {
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    fun getAllUsers(@RequestParam firstName: String?, @RequestParam lastName: String?, @RequestParam country: String?) =
-        userService.findAll(UserFilter(firstName, lastName, country))
+    fun getAllUsers(
+        @RequestParam firstName: String?,
+        @RequestParam lastName: String?,
+        @RequestParam country: String?,
+        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) @RequestParam initialBirthDate: LocalDateTime?,
+        @RequestParam address: String?
+    ) =
+        userService.findAll(UserFilter(firstName, lastName, country, initialBirthDate, address))
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)

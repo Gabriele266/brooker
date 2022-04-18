@@ -59,7 +59,14 @@ class UserServiceImpl(
         if (filter.country != null)
             query.addCriteria(Criteria.where("country").`is`(filter.country))
 
-        return mongoTemplate.find(query, User::class.java)
+        if (filter.address != null)
+            query.addCriteria(Criteria.where("address").regex("\\b${filter.address}\\b"))
+
+        val allResults = mongoTemplate.find(query, User::class.java)
+
+        return if (filter.initialBirthDate != null) allResults.filter {
+            it.birthDate.isAfter(filter.initialBirthDate)
+        } else allResults
     }
 
     override fun update(id: String, data: User): User {
