@@ -21,9 +21,10 @@ class UserController(
         @RequestParam lastName: String?,
         @RequestParam country: String?,
         @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) @RequestParam initialBirthDate: LocalDateTime?,
+        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) @RequestParam endBirthDate: LocalDateTime?,
         @RequestParam address: String?
     ) =
-        userService.findAll(UserFilter(firstName, lastName, country, initialBirthDate, address))
+        userService.findAll(UserFilter(firstName, lastName, country, initialBirthDate, address, endBirthDate))
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)

@@ -62,11 +62,17 @@ class UserServiceImpl(
         if (filter.address != null)
             query.addCriteria(Criteria.where("address").regex("\\b${filter.address}\\b"))
 
-        val allResults = mongoTemplate.find(query, User::class.java)
+        var allResults = mongoTemplate.find(query, User::class.java)
 
-        return if (filter.initialBirthDate != null) allResults.filter {
+        if (filter.initialBirthDate != null) allResults.filter {
             it.birthDate.isAfter(filter.initialBirthDate)
-        } else allResults
+        }
+
+        if (filter.endBirthDate != null) allResults = allResults.filter {
+            it.birthDate.isBefore(filter.endBirthDate)
+        }
+
+        return allResults
     }
 
     override fun update(id: String, data: User): User {

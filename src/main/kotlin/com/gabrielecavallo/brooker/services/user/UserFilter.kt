@@ -7,6 +7,7 @@ class UserFilter(
     val lastName: String? = null,
     val country: String? = null,
     val initialBirthDate: LocalDateTime? = null,
-    val address: String? = null
+    val address: String? = null,
+    val endBirthDate: LocalDateTime? = null
 ) {
 }
