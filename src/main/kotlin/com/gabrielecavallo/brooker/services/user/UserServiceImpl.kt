@@ -20,15 +20,16 @@ class UserServiceImpl(
     override fun saveAll(data: List<User>): List<User> =
         userRepository.saveAll(data)
 
-    override fun findById(id: String): User? =
+    override fun findById(id: String): User =
         userRepository.findById(stringToObjectId(id)).orElseThrow {
             throw InvalidIdException(id, "Invalid User reference")
         }
 
-    override fun removeById(id: String): User? {
+    override fun removeById(id: String): User {
+        val userData = findById(id)
         userRepository.deleteById(stringToObjectId(id))
 
-        return findById(id)
+        return userData
     }
 
     override fun count(): Long =
@@ -61,8 +62,11 @@ class UserServiceImpl(
         return mongoTemplate.find(query, User::class.java)
     }
 
-    override fun update(id: String, data: Any): User {
-        TODO("Not yet implemented")
+    override fun update(id: String, data: User): User {
+        removeById(id)
+
+        save(data)
+        return data
     }
 
     override fun removeAll() =

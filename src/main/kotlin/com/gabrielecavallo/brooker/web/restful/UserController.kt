@@ -30,4 +30,9 @@ class UserController(
     @ResponseStatus(HttpStatus.OK)
     fun removeUserById(@PathVariable id: String) =
         userService.removeById(id)
+
+    @PutMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    fun updateUserById(@PathVariable id: String, @RequestBody userData: User) =
+        userService.update(id, userData)
 }

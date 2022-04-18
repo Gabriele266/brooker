@@ -14,7 +14,7 @@ interface CRUDService<T, ID> {
     /**
      * Find by id
      */
-    fun findById(id: ID): T?
+    fun findById(id: ID): T
 
     /**
      * Find all entities
@@ -29,7 +29,7 @@ interface CRUDService<T, ID> {
     /**
      * Remove one by id
      */
-    fun removeById(id: ID): T?
+    fun removeById(id: ID): T
 
     /**
      * Remove all users
@@ -39,5 +39,5 @@ interface CRUDService<T, ID> {
     /**
      * Update an existing entity
      */
-    fun update(id: ID, data: Any): T
+    fun update(id: ID, data: T): T
 }

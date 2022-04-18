@@ -3,6 +3,7 @@ package com.gabrielecavallo.brooker.common
 import com.gabrielecavallo.brooker.exceptions.InvalidIdException
 import org.bson.types.ObjectId
 import kotlin.jvm.Throws
+import kotlin.random.Random
 
 /**
  * Converts a string into an object id
@@ -13,3 +14,9 @@ fun stringToObjectId(input: String): ObjectId {
 
     return ObjectId(input)
 }
+
+fun randomInt(min: Int, max: Int) =
+    Random.nextInt(min, max)
+
+fun randomLong(min: Long, max: Long) =
+    Random.nextLong(min, max)
