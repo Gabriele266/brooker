@@ -7,4 +7,5 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface BookPurchaseRepository: MongoRepository<BookPurchase, ObjectId> {
+    override fun <S : BookPurchase?> save(entity: S): S
 }
