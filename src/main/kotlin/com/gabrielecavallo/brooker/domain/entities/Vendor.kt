@@ -1,13 +1,14 @@
 package com.gabrielecavallo.brooker.domain.entities
 
-import com.gabrielecavallo.brooker.domain.shared.WithId
 import com.gabrielecavallo.brooker.domain.shared.WithName
 import org.springframework.data.mongodb.core.mapping.Document
+import javax.validation.constraints.Email
 
 @Document
 class Vendor(
     firstName: String,
     lastName: String,
+    @Email(message = "Provide a valid email")
     var email: String,
     var tel: String,
     var address: String,
