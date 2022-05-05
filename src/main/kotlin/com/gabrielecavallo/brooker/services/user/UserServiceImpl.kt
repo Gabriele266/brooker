@@ -2,8 +2,10 @@ package com.gabrielecavallo.brooker.services.user
 
 import com.gabrielecavallo.brooker.common.stringToObjectId
 import com.gabrielecavallo.brooker.domain.entities.User
+import com.gabrielecavallo.brooker.events.UserDeletedEvent
 import com.gabrielecavallo.brooker.exceptions.InvalidIdException
 import com.gabrielecavallo.brooker.repositories.UserRepository
+import org.springframework.context.ApplicationEventPublisher
 import org.springframework.data.mongodb.core.MongoTemplate
 import org.springframework.data.mongodb.core.query.Criteria
 import org.springframework.data.mongodb.core.query.Query
@@ -13,6 +15,7 @@ import org.springframework.stereotype.Service
 class UserServiceImpl(
     val userRepository: UserRepository,
     val mongoTemplate: MongoTemplate,
+    val applicationEventPublisher: ApplicationEventPublisher
 ) : UserService {
     override fun save(data: User): User =
         userRepository.save(data)
@@ -29,6 +32,7 @@ class UserServiceImpl(
         val userData = findById(id)
         userRepository.deleteById(stringToObjectId(id))
 
+        applicationEventPublisher.publishEvent(UserDeletedEvent(userData, "User removed"))
         return userData
     }
 

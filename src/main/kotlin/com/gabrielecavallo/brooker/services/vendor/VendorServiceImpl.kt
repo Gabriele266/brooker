@@ -2,15 +2,18 @@ package com.gabrielecavallo.brooker.services.vendor
 
 import com.gabrielecavallo.brooker.common.stringToObjectId
 import com.gabrielecavallo.brooker.domain.entities.Vendor
+import com.gabrielecavallo.brooker.events.VendorDeletedEvent
 import com.gabrielecavallo.brooker.exceptions.InvalidIdException
 import com.gabrielecavallo.brooker.repositories.VendorRepository
+import org.springframework.context.ApplicationEventPublisher
 import org.springframework.data.mongodb.core.MongoTemplate
 import org.springframework.stereotype.Service
 
 @Service
 class VendorServiceImpl(
     val vendorRepository: VendorRepository,
-    val mongoTemplate: MongoTemplate
+    val mongoTemplate: MongoTemplate,
+    val applicationEventPublisher: ApplicationEventPublisher
 ) : VendorService {
     override fun save(data: Vendor): Vendor =
         vendorRepository.save(data)
@@ -31,6 +34,7 @@ class VendorServiceImpl(
         val initial = findById(id)
 
         vendorRepository.deleteById(stringToObjectId(id))
+        applicationEventPublisher.publishEvent(VendorDeletedEvent(initial))
         return initial
     }
 
