@@ -7,3 +7,4 @@ type Mutation {
 }
 
 scalar DateTime
+scalar Email
