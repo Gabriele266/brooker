@@ -1,0 +1,34 @@
+type User {
+    id: String!
+    firstName: String!
+    lastName: String!
+    email: String!
+    address: String!
+    birthDate: DateTime!
+    country: String!
+}
+
+input UserInput {
+    firstName: String!
+    lastName: String!
+    email: String!
+    address: String!
+    birthDate: DateTime!
+    country: String!
+}
+
+extend type Query {
+    user(id: String!): User!
+    users(firstName: String,
+        lastName: String,
+        initialBirthDate: DateTime,
+        address: String,
+        endBirthDate: DateTime
+    ): [User!]!
+}
+
+extend type Mutation {
+    addUser(user: UserInput!): User!
+    removeUser(id: String!): User!
+    updateUser(id: String!, user: UserInput!): User!
+}
