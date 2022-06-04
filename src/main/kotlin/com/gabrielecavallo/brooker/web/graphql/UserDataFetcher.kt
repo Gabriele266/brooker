@@ -1,12 +1,10 @@
 package com.gabrielecavallo.brooker.web.graphql
 
+import com.gabrielecavallo.brooker.exceptions.InvalidIdException
 import com.gabrielecavallo.brooker.services.user.UserFilter
 import com.gabrielecavallo.brooker.services.user.UserService
 import com.gabrielecavallo.brooker.web.graphql.input.UserInput
-import com.netflix.graphql.dgs.DgsComponent
-import com.netflix.graphql.dgs.DgsMutation
-import com.netflix.graphql.dgs.DgsQuery
-import com.netflix.graphql.dgs.InputArgument
+import com.netflix.graphql.dgs.*
 import org.springframework.format.annotation.DateTimeFormat
 import java.time.LocalDateTime
 
@@ -32,7 +30,9 @@ class UserDataFetcher(
     fun addUser(@InputArgument user: UserInput) =
         userService.save(user.toUser())
 
+    @DgsEnableDataFetcherInstrumentation(false)
     @DgsMutation
+    @Throws(InvalidIdException::class)
     fun removeUser(@InputArgument id: String) =
         userService.removeById(id)
 

@@ -1,5 +1,7 @@
 package com.gabrielecavallo.brooker.services.common
 
+import com.gabrielecavallo.brooker.exceptions.InvalidIdException
+
 interface CRUDService<T, ID> {
     /**
      * Save a new entity
@@ -14,6 +16,7 @@ interface CRUDService<T, ID> {
     /**
      * Find by id
      */
+    @Throws(InvalidIdException::class)
     fun findById(id: ID): T
 
     /**

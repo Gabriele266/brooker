@@ -1,5 +1,6 @@
 package com.gabrielecavallo.brooker.web
 
+import com.gabrielecavallo.brooker.domain.entities.User
 import com.gabrielecavallo.brooker.services.user.UserService
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.DisplayName
@@ -23,10 +24,9 @@ class UserControllerTest @Autowired constructor(
     @DisplayName("Test get all users")
     @Test
     fun testFindAll() {
-        val result = restTemplate.getForEntity(endp("/users"), String::class.java)
+        val result = restTemplate.getForEntity(endp("/users"), Array<User>::class.java)
         assertThat(result.statusCode).isEqualTo(HttpStatus.OK)
-        assertThat(result.body?.startsWith("[")).isTrue
-        assertThat(result.body?.endsWith("]")).isTrue
+        assertThat(result.body?.size).isGreaterThan(0)
     }
 
     @DisplayName("Test get user by id")

@@ -2,7 +2,7 @@ package com.gabrielecavallo.brooker.common
 
 import com.gabrielecavallo.brooker.exceptions.InvalidIdException
 import org.bson.types.ObjectId
-import kotlin.jvm.Throws
+import java.time.LocalDateTime
 import kotlin.random.Random
 
 /**
@@ -20,3 +20,6 @@ fun randomInt(min: Int, max: Int) =
 
 fun randomLong(min: Long, max: Long) =
     Random.nextLong(min, max)
+
+fun minDate(): LocalDateTime =
+    LocalDateTime.parse("1900-01-01T00:00Z")
