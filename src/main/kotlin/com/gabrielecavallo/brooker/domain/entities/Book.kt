@@ -18,7 +18,6 @@ class Book(
     @DocumentReference
     var vendor: Vendor,
     var price: Int,
-    var rating: Int,
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     var lastModifiedDate: LocalDateTime,
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)

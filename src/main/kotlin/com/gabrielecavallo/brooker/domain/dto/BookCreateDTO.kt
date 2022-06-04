@@ -8,7 +8,7 @@ data class BookCreateDTO(
     var title: String,
     var description: String,
     var plot: String,
-    var bodyKey: String,
+    var htmlContent: String,
     @DocumentReference
     var publishers: List<String>,
     @DocumentReference

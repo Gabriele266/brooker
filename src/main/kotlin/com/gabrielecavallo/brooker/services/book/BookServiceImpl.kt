@@ -6,16 +6,19 @@ import com.gabrielecavallo.brooker.domain.entities.Book
 import com.gabrielecavallo.brooker.exceptions.InvalidIdException
 import com.gabrielecavallo.brooker.repositories.BookRepository
 import com.gabrielecavallo.brooker.services.publisher.PublisherService
+import com.gabrielecavallo.brooker.services.s3.S3Service
 import com.gabrielecavallo.brooker.services.vendor.VendorService
 import org.springframework.data.mongodb.core.MongoTemplate
 import org.springframework.stereotype.Service
+import java.time.LocalDateTime
 
 @Service
 class BookServiceImpl(
     val bookRepository: BookRepository,
     val mongoTemplate: MongoTemplate,
     val publisherService: PublisherService,
-    val vendorService: VendorService
+    val vendorService: VendorService,
+    val s3Service: S3Service
 ) : BookService {
     override fun findAll(filter: BookFilter): List<Book> =
         filter.filter(mongoTemplate)
@@ -23,8 +26,16 @@ class BookServiceImpl(
     override fun save(data: Book): Book =
         bookRepository.save(data)
 
-    fun save(dto: BookCreateDTO): Book =
-        bookRepository.save(constructFromDTO(dto))
+    fun save(dto: BookCreateDTO): Book {
+        var book = constructFromDTO(dto)
+
+        // Upload to s3
+        s3Service.upload("brookerbooks", dto.title, dto.htmlContent)
+
+        book.bodyKey = dto.title
+
+        return bookRepository.save(book)
+    }
 
     override fun saveAll(data: List<Book>): List<Book> =
         bookRepository.saveAll(data)
@@ -62,17 +73,30 @@ class BookServiceImpl(
     }
 
     override fun saveAllDTO(data: List<BookCreateDTO>): List<Book> =
-        bookRepository.saveAll(data.map { constructFromDTO(it) })
+        bookRepository.saveAll(data.map {
+            var book = constructFromDTO(it)
+
+            val key = formatBookS3Key(book)
+            s3Service.upload("brookerbooks", key, it.htmlContent)
+            book.bodyKey = key
+
+            book
+        })
 
     override fun constructFromDTO(dto: BookCreateDTO) = Book(
         dto.title,
         dto.description,
         dto.plot,
-        dto.bodyKey,
+        dto.htmlContent,
         dto.publishers.map { publisherService.findById(it) },
         vendorService.findById(dto.vendorId),
         dto.price,
         dto.lastModifiedDate,
         dto.publishedDate
     )
+
+    private fun formatBookS3Key(book: Book) =
+        "bk${book.title.filter { !it.isWhitespace() }.lowercase()}-${
+            LocalDateTime.now().toString().filter { it != '.' && it != ':' && it != '-' }
+        }"
 }
