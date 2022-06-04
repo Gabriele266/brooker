@@ -99,4 +99,11 @@ class BookServiceImpl(
         "bk${book.title.filter { !it.isWhitespace() }.lowercase()}-${
             LocalDateTime.now().toString().filter { it != '.' && it != ':' && it != '-' }
         }"
+
+    override fun download(id: String, format: BookDownloadFormat): String {
+        val book = findById(id)
+
+        val result = s3Service.download("brookerbooks", book.bodyKey)
+        return String(result)
+    }
 }

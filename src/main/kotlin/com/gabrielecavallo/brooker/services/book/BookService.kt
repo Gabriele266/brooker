@@ -20,4 +20,9 @@ interface BookService : CRUDService<Book, String> {
      * Save all the books from the dto
      */
     fun saveAllDTO(data: List<BookCreateDTO>): List<Book>
+
+    /**
+     * Download a book from the id
+     */
+    fun download(id: String, format: BookDownloadFormat): String
 }

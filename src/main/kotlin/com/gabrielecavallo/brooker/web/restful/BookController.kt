@@ -1,6 +1,7 @@
 package com.gabrielecavallo.brooker.web.restful
 
 import com.gabrielecavallo.brooker.domain.dto.BookCreateDTO
+import com.gabrielecavallo.brooker.services.book.BookDownloadFormat
 import com.gabrielecavallo.brooker.services.book.BookService
 import org.springframework.web.bind.annotation.*
 
@@ -23,4 +24,8 @@ class BookController(
     @DeleteMapping("/{id}")
     fun removeBookByid(@PathVariable id: String) =
         bookService.removeById(id)
+
+    @GetMapping("/download/{id}")
+    fun downloadBookById(@PathVariable id: String, @RequestParam format: String?): String =
+        bookService.download(id, BookDownloadFormat.HTML)
 }
