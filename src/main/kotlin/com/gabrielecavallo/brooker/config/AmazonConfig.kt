@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Configuration
 @Configuration
 class AmazonConfig {
     @Bean
-    fun s3(@Value("s3.accessKey") accessKey: String, @Value("s3.secretKey") secretKey: String): AmazonS3 {
+    fun s3(@Value("\${s3.accessKey}") accessKey: String, @Value("\${s3.secretKey}") secretKey: String): AmazonS3 {
         val credentials: AWSCredentials =
             BasicAWSCredentials(accessKey, secretKey)
 
