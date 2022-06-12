@@ -5,5 +5,14 @@ enum class BookDownloadFormat(
 ) {
     HTML("html"),
     PDF("pdf"),
-    IMG("img")
+    IMG("img");
+
+    companion object {
+        /**
+         * Construct book download format from the code
+         */
+        fun fromCode(code: String): BookDownloadFormat =
+            values().first { it.code.equals(code) }
+
+    }
 }

@@ -3,12 +3,16 @@ package com.gabrielecavallo.brooker.web.restful
 import com.gabrielecavallo.brooker.domain.dto.BookCreateDTO
 import com.gabrielecavallo.brooker.services.book.BookDownloadFormat
 import com.gabrielecavallo.brooker.services.book.BookService
+import com.gabrielecavallo.brooker.services.pdf.PdfService
+import org.springframework.http.HttpHeaders
+import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 @RequestMapping("/books")
 @RestController
 class BookController(
-    val bookService: BookService
+    val bookService: BookService,
+    val pdfService: PdfService
 ) {
     @GetMapping
     fun getBooks() = bookService.findAll()
@@ -26,6 +30,14 @@ class BookController(
         bookService.removeById(id)
 
     @GetMapping("/download/{id}")
-    fun downloadBookById(@PathVariable id: String, @RequestParam format: String?): String =
-        bookService.download(id, BookDownloadFormat.HTML)
+    fun downloadBookById(@PathVariable id: String, @RequestParam format: String?): ResponseEntity<String> {
+        val bookInfo = getBookById(id)
+
+        val ft = BookDownloadFormat.fromCode(format ?: BookDownloadFormat.PDF.code)
+        val data = bookService.download(id, ft)
+
+        return ResponseEntity.ok()
+            .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"${bookInfo.bodyKey}.${ft.code}\"")
+            .body(data)
+    }
 }

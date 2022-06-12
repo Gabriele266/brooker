@@ -5,9 +5,12 @@ import com.gabrielecavallo.brooker.domain.dto.BookCreateDTO
 import com.gabrielecavallo.brooker.domain.entities.Book
 import com.gabrielecavallo.brooker.exceptions.InvalidIdException
 import com.gabrielecavallo.brooker.repositories.BookRepository
+import com.gabrielecavallo.brooker.services.pdf.PdfService
 import com.gabrielecavallo.brooker.services.publisher.PublisherService
 import com.gabrielecavallo.brooker.services.s3.S3Service
 import com.gabrielecavallo.brooker.services.vendor.VendorService
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import org.springframework.data.mongodb.core.MongoTemplate
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
@@ -18,7 +21,8 @@ class BookServiceImpl(
     val mongoTemplate: MongoTemplate,
     val publisherService: PublisherService,
     val vendorService: VendorService,
-    val s3Service: S3Service
+    val s3Service: S3Service,
+    val pdfService: PdfService
 ) : BookService {
     override fun findAll(filter: BookFilter): List<Book> =
         filter.filter(mongoTemplate)
@@ -29,12 +33,20 @@ class BookServiceImpl(
     fun save(dto: BookCreateDTO): Book {
         var book = constructFromDTO(dto)
 
+        runBlocking {
+            launch {
+                s3Service.upload("brookerbooks", dto.title, dto.htmlContent)
+            }
+
+            launch {
+                bookRepository.save(book)
+            }
+        }
         // Upload to s3
-        s3Service.upload("brookerbooks", dto.title, dto.htmlContent)
 
         book.bodyKey = dto.title
 
-        return bookRepository.save(book)
+        return book
     }
 
     override fun saveAll(data: List<Book>): List<Book> =
@@ -72,16 +84,31 @@ class BookServiceImpl(
         return data
     }
 
-    override fun saveAllDTO(data: List<BookCreateDTO>): List<Book> =
-        bookRepository.saveAll(data.map {
-            var book = constructFromDTO(it)
+    override fun saveAllDTO(data: List<BookCreateDTO>): List<Book> {
+        val booksData = data.map {
+            val book = constructFromDTO(it)
 
             val key = formatBookS3Key(book)
-            s3Service.upload("brookerbooks", key, it.htmlContent)
             book.bodyKey = key
 
             book
-        })
+        }
+
+        // Concurrently upload and save to the repo
+        runBlocking {
+            launch {
+                bookRepository.saveAll(booksData)
+            }
+
+            launch {
+                for ((index, value) in data.withIndex()) {
+                    s3Service.upload("brookerbooks", booksData[index].bodyKey, value.htmlContent)
+                }
+            }
+        }
+
+        return booksData
+    }
 
     override fun constructFromDTO(dto: BookCreateDTO) = Book(
         dto.title,
@@ -104,6 +131,12 @@ class BookServiceImpl(
         val book = findById(id)
 
         val result = s3Service.download("brookerbooks", book.bodyKey)
-        return String(result)
+        val html = String(result)
+
+        return when (format) {
+            BookDownloadFormat.HTML -> html
+            BookDownloadFormat.IMG -> html
+            BookDownloadFormat.PDF -> pdfService.createFromHtml(html)
+        }
     }
 }
