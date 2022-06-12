@@ -40,4 +40,11 @@ class BookController(
             .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"${bookInfo.bodyKey}.${ft.code}\"")
             .body(data)
     }
+
+    @DeleteMapping
+    fun removeBooksById(@RequestBody ids: List<String>): String {
+        ids.forEach { bookService.removeById(it) }
+
+        return "true"
+    }
 }

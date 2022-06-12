@@ -35,7 +35,7 @@ class BookServiceImpl(
 
         runBlocking {
             launch {
-                s3Service.upload("brookerbooks", dto.title, dto.htmlContent)
+                s3Service.upload(dto.title, dto.htmlContent)
             }
 
             launch {
@@ -102,7 +102,7 @@ class BookServiceImpl(
 
             launch {
                 for ((index, value) in data.withIndex()) {
-                    s3Service.upload("brookerbooks", booksData[index].bodyKey, value.htmlContent)
+                    s3Service.upload(booksData[index].bodyKey, value.htmlContent)
                 }
             }
         }
@@ -130,7 +130,7 @@ class BookServiceImpl(
     override fun download(id: String, format: BookDownloadFormat): String {
         val book = findById(id)
 
-        val result = s3Service.download("brookerbooks", book.bodyKey)
+        val result = s3Service.download(book.bodyKey)
         val html = String(result)
 
         return when (format) {
