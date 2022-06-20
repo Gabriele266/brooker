@@ -3,6 +3,7 @@ package com.gabrielecavallo.brooker.common
 import com.gabrielecavallo.brooker.exceptions.InvalidIdException
 import org.bson.types.ObjectId
 import java.time.LocalDateTime
+import java.util.regex.Pattern
 import kotlin.random.Random
 
 /**
@@ -23,3 +24,7 @@ fun randomLong(min: Long, max: Long) =
 
 fun minDate(): LocalDateTime =
     LocalDateTime.parse("1900-01-01T00:00Z")
+
+fun regexContainsIns(value: String) = Pattern.compile(
+    "^$value"
+)

@@ -12,6 +12,9 @@ import com.gabrielecavallo.brooker.services.vendor.VendorService
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.springframework.data.mongodb.core.MongoTemplate
+import org.springframework.data.mongodb.core.query.Criteria
+import org.springframework.data.mongodb.core.query.Query
+import org.springframework.data.mongodb.core.query.isEqualTo
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
 
@@ -138,5 +141,12 @@ class BookServiceImpl(
             BookDownloadFormat.IMG -> html
             BookDownloadFormat.PDF -> pdfService.createFromHtml(html)
         }
+    }
+
+    override fun findWithVendor(id: String): List<Book> {
+        val query = Query()
+        query.addCriteria(Criteria.where("vendor").isEqualTo(id))
+
+        return mongoTemplate.find(query, Book::class.java)
     }
 }

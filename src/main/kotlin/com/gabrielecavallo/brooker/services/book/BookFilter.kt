@@ -1,11 +1,12 @@
 package com.gabrielecavallo.brooker.services.book
 
+import com.gabrielecavallo.brooker.common.stringToObjectId
 import com.gabrielecavallo.brooker.domain.entities.Book
-import com.gabrielecavallo.brooker.domain.entities.Vendor
 import com.gabrielecavallo.brooker.services.common.MongoFilter
 import org.springframework.data.mongodb.core.MongoTemplate
 import org.springframework.data.mongodb.core.query.Criteria
 import org.springframework.data.mongodb.core.query.Query
+import org.springframework.data.mongodb.core.query.isEqualTo
 import java.time.LocalDateTime
 
 class BookFilter(
@@ -13,8 +14,7 @@ class BookFilter(
     val description: String?,
     val plot: String?,
     val publishedBy: String?,
-    val publisherNames: List<String>?,
-    val vendor: Vendor?,
+    val vendorId: String?,
     val priceGreatherThan: Int?,
     val priceLowerThan: Int?,
     val modifiedBefore: LocalDateTime?,
@@ -25,9 +25,6 @@ class BookFilter(
     override fun filter(mongoTemplate: MongoTemplate): List<Book> {
         val query = Query()
 
-        if (title != null)
-            query.addCriteria(Criteria.where("title").regex("/$title/"))
-
         if (description != null)
             query.addCriteria(Criteria.where("description").regex("/$description/"))
 
@@ -37,10 +34,16 @@ class BookFilter(
         if (priceGreatherThan != null)
             query.addCriteria(Criteria.where("price").gt(priceGreatherThan))
 
+        if (vendorId != null)
+            query.addCriteria(Criteria.where("vendor").isEqualTo(stringToObjectId(vendorId)))
+
         if (priceLowerThan != null)
             query.addCriteria(Criteria.where("price").lt(priceLowerThan))
 
         var initial = mongoTemplate.find(query, Book::class.java)
+
+        if (title != null)
+            initial = initial.filter { it.title.contains(title, true) }
 
         if (modifiedBefore != null)
             initial = initial.filter {

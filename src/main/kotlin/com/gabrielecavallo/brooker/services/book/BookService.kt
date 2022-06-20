@@ -25,4 +25,9 @@ interface BookService : CRUDService<Book, String> {
      * Download a book from the id
      */
     fun download(id: String, format: BookDownloadFormat): String
+
+    /**
+     * Find all the books of the given vendor
+     */
+    fun findWithVendor(id: String): List<Book>
 }
