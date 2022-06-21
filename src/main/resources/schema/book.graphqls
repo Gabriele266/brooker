@@ -1,0 +1,17 @@
+type Book {
+    id: String!
+    title: String!
+    description: String!
+    plot: String!
+    publishers: [Publisher!]!
+    vendor: Vendor!
+    price: Int!
+    lastModifiedDate: DateTime!
+    publishedDate: DateTime!
+    reviews: [Review!]!
+}
+
+extend type Query {
+    books: [Book!]!
+    book(id: String!): Book!
+}

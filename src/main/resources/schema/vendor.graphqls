@@ -1,0 +1,13 @@
+type Vendor {
+    id: String!
+    firstName: String!
+    lastName: String!
+    email: String!
+    tel: String!
+    address: String!
+    country: String!
+}
+
+extend type Query {
+    vendors: [Vendor!]!
+}

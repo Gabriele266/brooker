@@ -1,0 +1,28 @@
+type Publisher {
+    id: String!
+    firstName: String!
+    lastName: String!
+    story: String!
+    averageRating: Float!
+    language: String!
+    tags: [String!]!
+}
+
+input PublisherInput {
+    firstName: String!
+    lastName: String!
+    story: String!
+    averageRating: Float!
+    language: String!
+    tags: [String!]!
+}
+
+extend type Query {
+    publishers: [Publisher!]!
+    publisher(id: String): Publisher!
+}
+
+extend type Mutation {
+    createPublisher(input: PublisherInput!): Publisher!
+    deletePublisher(id: String!): Publisher!
+}
