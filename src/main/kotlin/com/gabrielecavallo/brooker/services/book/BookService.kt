@@ -30,4 +30,9 @@ interface BookService : CRUDService<Book, String> {
      * Find all the books of the given vendor
      */
     fun findWithVendor(id: String): List<Book>
+
+    /**
+     * Checks if there is an entity with the given id
+     */
+    fun hasWithId(id: String): Boolean
 }

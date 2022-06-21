@@ -16,6 +16,9 @@ fun stringToObjectId(input: String): ObjectId {
     return ObjectId(input)
 }
 
+fun stringIsObjectId(input: String): Boolean =
+    ObjectId.isValid(input)
+
 fun randomInt(min: Int, max: Int) =
     Random.nextInt(min, max)
 

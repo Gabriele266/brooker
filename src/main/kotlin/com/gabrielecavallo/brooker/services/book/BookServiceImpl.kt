@@ -1,5 +1,6 @@
 package com.gabrielecavallo.brooker.services.book
 
+import com.gabrielecavallo.brooker.common.stringIsObjectId
 import com.gabrielecavallo.brooker.common.stringToObjectId
 import com.gabrielecavallo.brooker.domain.dto.BookCreateDTO
 import com.gabrielecavallo.brooker.domain.entities.Book
@@ -141,6 +142,15 @@ class BookServiceImpl(
             BookDownloadFormat.IMG -> html
             BookDownloadFormat.PDF -> pdfService.createFromHtml(html)
         }
+    }
+
+    override fun hasWithId(id: String): Boolean {
+        if (stringIsObjectId(id)) {
+            val result: Book? = bookRepository.findById(stringToObjectId(id)).orElse(null)
+
+            return result != null
+        }
+        return false
     }
 
     override fun findWithVendor(id: String): List<Book> {

@@ -23,4 +23,9 @@ interface UserService: CRUDService<User, String> {
      * Find all users filtered
      */
     fun findAll(filter: UserFilter): List<User>
+
+    /**
+     * Check if there is a user with the given id
+     */
+    fun hasWithId(id: String): Boolean
 }

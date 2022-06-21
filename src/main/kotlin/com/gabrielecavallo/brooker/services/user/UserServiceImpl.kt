@@ -1,5 +1,6 @@
 package com.gabrielecavallo.brooker.services.user
 
+import com.gabrielecavallo.brooker.common.stringIsObjectId
 import com.gabrielecavallo.brooker.common.stringToObjectId
 import com.gabrielecavallo.brooker.domain.entities.User
 import com.gabrielecavallo.brooker.events.UserDeletedEvent
@@ -7,8 +8,6 @@ import com.gabrielecavallo.brooker.exceptions.InvalidIdException
 import com.gabrielecavallo.brooker.repositories.UserRepository
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.data.mongodb.core.MongoTemplate
-import org.springframework.data.mongodb.core.query.Criteria
-import org.springframework.data.mongodb.core.query.Query
 import org.springframework.stereotype.Service
 
 @Service
@@ -62,4 +61,9 @@ class UserServiceImpl(
 
     override fun removeAll() =
         userRepository.deleteAll()
+
+    override fun hasWithId(id: String): Boolean {
+        return if (stringIsObjectId(id)) (userRepository.findById(stringToObjectId(id))
+            .orElseGet { null } != null) else false
+    }
 }
