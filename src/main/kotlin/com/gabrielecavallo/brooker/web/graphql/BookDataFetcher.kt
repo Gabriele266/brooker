@@ -4,10 +4,7 @@ import com.gabrielecavallo.brooker.domain.entities.Book
 import com.gabrielecavallo.brooker.domain.entities.BookReview
 import com.gabrielecavallo.brooker.services.book.BookService
 import com.gabrielecavallo.brooker.services.review.ReviewService
-import com.netflix.graphql.dgs.DgsComponent
-import com.netflix.graphql.dgs.DgsData
-import com.netflix.graphql.dgs.DgsDataFetchingEnvironment
-import com.netflix.graphql.dgs.DgsQuery
+import com.netflix.graphql.dgs.*
 
 @DgsComponent
 class BookDataFetcher(
@@ -23,4 +20,8 @@ class BookDataFetcher(
         val book = env.getSource<Book>()
         return reviewService.findForBook(book.id)
     }
+
+    @DgsQuery(field = "book")
+    fun getBookById(@InputArgument id: String) =
+        bookService.findById(id)
 }
